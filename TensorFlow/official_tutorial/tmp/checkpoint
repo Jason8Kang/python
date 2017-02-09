@@ -1,0 +1,2 @@
+model_checkpoint_path: "C:\\Users\\jason\\Documents\\Python Scripts\\TensorFlow\\tmp\\model"
+all_model_checkpoint_paths: "C:\\Users\\jason\\Documents\\Python Scripts\\TensorFlow\\tmp\\model"
