@@ -5,3 +5,7 @@
 - [ggplot2 Quick Reference | Software and Programmer Efficiency Research Group](http://sape.inf.usi.ch/quick-reference/ggplot2)
 - [Function reference ? ggplot2](http://ggplot2.tidyverse.org/reference/)
 - [Data visualisation](http://r4ds.had.co.nz/data-visualisation.html)
+实战：
+
+- [实战1](http://nbviewer.jupyter.org/github/Jason8Kang/python/blob/master/ggplot/practice2/ggplot.html)
+- [实战2](http://nbviewer.jupyter.org/github/Jason8Kang/python/blob/master/ggplot/practice1/ggplot_practice.html)
