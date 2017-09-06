@@ -1,0 +1,209 @@
+---
+title: "R Notebook"
+output:
+  html_document: default
+  html_notebook: default
+---
+- [手把手教你使用ggplot2绘制散点图](http://www.ppvke.com/Blog/archives/28549)
+- [全栈 - 13 ggplot2 在 R 中进行可视化](https://zhuanlan.zhihu.com/p/25803062)
+- [全栈 - 14 ggplot2 基本语法和基础图形](https://zhuanlan.zhihu.com/p/25862085)
+- [全栈 - 15 实战 Diamonds 数据集探索形](https://zhuanlan.zhihu.com/p/25971987)
+- [手把手教你使用ggplot2绘制条形图](http://shujuren.org/article/44.html)
+- [手把手教你使用ggplot2进行数据分布探索](http://10tiao.com/html/403/201601/401328724/1.html)
+- [如何使用 ggplot2 ？](https://www.zhihu.com/question/24779017)
+- [ggplot2入门和进阶（上）](http://www.cellyse.com/how_to_use_gggplot2_part1/)
+- [ggplot2入门和进阶（下）](http://www.cellyse.com/how_to_use_gggplot2_part2/)
+- [datacamp ggplot2教程](https://www.datacamp.com/courses/data-visualization-with-ggplot2-1)
+
+```{r}
+library(ggplot2)
+library(ggplot2movies)
+x <- rnorm(100,14,5)
+y <- x + rnorm(100,0,1)
+plot(x,y)
+text(13,20, expression(x[1] == x[2]))
+
+x <- rnorm(100,14,5) 
+y <- x + rnorm(100,0,1) 
+ggplot(data= NULL, aes(x = x, y = y)) +  #开始绘图
+  geom_point(color = "darkred") +  #添加点
+  annotate("text",x =13 , y = 20,parse = T,
+           label = "x[1] == x[2]") #添加注释
+```
+```{r}
+head(mtcars)
+p <- ggplot(mtcars, aes(mpg, wt, colour = factor(cyl))) +
+  geom_point() #geom_point()为通过”+”以图层的方式加入点的几何对象
+p
+mtcars.c <- transform(mtcars, mpg = mpg^2)
+p %+% mtcars.c #用mtcars.c替换mtcars
+```
+
+```{r}
+p1 <- ggplot(data = mtcars)
+summary(p1)
+p2 <- ggplot(data = mtcars, mapping = aes(x = wt, y = hp, color = gear))
+summary(p2)
+```
+
+```{r}
+p <- ggplot(mtcars, aes(wt, mpg)) 
+p + geom_point(color = "blue") #设定散点的颜色为蓝色
+p + geom_point(aes(color = "blue")) #错误写法
+```
+
+```{r}
+p1 <- ggplot(data = mtcars, mapping = aes(x = wt, y = hp)) + geom_line() 
+p1
+#默认分组设置, 即group=1
+#geom_line为折线图的几何对象
+p2 <- ggplot(data = mtcars, mapping = aes(x = wt, y = hp, group = factor(gear))) + geom_line() 
+p2
+#把wt和hp所对应的观测点按gear(gear以因子化变为离散变量)进行分组
+```
+```{r}
+p <- ggplot(mtcars, aes(x = mpg, y = wt, color = factor(gear)))
+#设定默认的映射关系
+p + geom_point()
+#沿用默认的映射关系来绘制散点图
+p + geom_point(aes(shape = factor(carb))) 
+#添加图层中的shape的映射关系
+p + geom_point(aes(y = carb)) 
+#修改默认的y的映射关系, 注意图中y轴名称仍然以默认的wt表示
+p + geom_point(aes(color = NULL))
+ #删除默认的color映射关系
+```
+
+```{r}
+#构建不同于mtcars的数据集mtcars.c
+mtcars.c <- transform(mtcars, mpg = mpg^2)
+ggplot()+
+  geom_point(aes(x = hp, y = mpg), data = mtcars, color = "red") + 
+  geom_point(aes(x = mtcars$hp, y = mtcars$disp), color = "green")+ 
+  #选用向量数据
+  geom_point(aes(x = hp, y= mpg), data = mtcars.c, color = "blue") 
+  #选用不同的数据集
+```
+
+```{r}
+p <- ggplot(mtcars, aes(wt, mpg))
+p + geom_point()
+#更改颜色-连续变量
+p + geom_point(aes(color = qsec))
+#更改颜色-离散变量
+p + geom_point(aes(color = factor(gear)))
+#更改透明度
+p + geom_point(aes(alpha = qsec))
+#更改形状
+p + geom_point(aes(shape = factor(gear)))
+#更改点大小
+p + geom_point(aes(size = qsec))
+#两种颜色的叠加
+p + geom_point(color = "grey50", size = 5) + geom_point(aes(color = qsec), size = 4)
+#颜色和形状的叠加
+p + geom_point(color = "grey50", size = 5) + geom_point(aes(shape = factor(gear)), size = 3)
+```
+
+```{r}
+m <- ggplot(movies, aes(rating)) 
+#这里使用movies数据集
+m + geom_histogram()
+m + geom_histogram(binwidth = 0.5)
+#调整分箱(bin)数据
+m + geom_histogram(binwidth = 1)
+m + geom_histogram(binwidth = 2)
+```
+
+```{r}
+m + geom_histogram(binwidth = 0.5, aes(fill =..count..))
+m + geom_histogram(binwidth = 0.5, aes(y = ..density..)) + geom_density()
+```
+
+```{r}
+d <- ggplot(diamonds, aes(x = clarity, fill = cut ))
+d + geom_histogram( stat="count",position = "dodge")
+d + geom_histogram( stat="count",position = "fill")
+d + geom_histogram( stat="count",position = "stack")
+ggplot(diamonds) + geom_point(aes(color, price/carat), position = "jitter")
+```
+```{r}
+A <- c(1, 2, 3, 4, 5, 6, 7, 8)
+B <- c(2, 10, 11, 5, 6, 1, 10, 20)
+ggplot() + geom_histogram(aes(x = A, y = B), stat = "identity")
+```
+
+```{r}
+m <- ggplot(mtcars, aes(qsec, wt))
+m + stat_smooth() + geom_point()
+m + stat_smooth(se = FALSE) + geom_point()
+ #取消默认的置信区间
+m + stat_smooth(fill = "red", size = 2, alpha = 0.5, color = "green") + geom_point()
+#更改置信区间和线条颜色
+m + stat_smooth(method = "lm") + geom_point() 
+#用一元一次线性方程拟合
+m + stat_smooth(method = "lm", formula = y ~ poly(x, 3)) + geom_point() 
+#使用一元二次方程拟合
+require(splines)
+require(MASS)
+m + stat_smooth(method = "lm", formula = y ~ ns(x, 3)) + geom_point()
+# 加载splines和MASS包, 使用自由度为3的自然样条来进行拟合
+m <- ggplot(mtcars, aes(y = wt, x = mpg, group = factor(cyl)))
+m + stat_smooth(method = lm, aes(color = factor(cyl), fill = factor(cyl))) + geom_point( aes(color = factor(cyl)))
+#按cyl这个离散变量进行分组, 分别拟合数据
+```
+
+```{r}
+p <- ggplot(mtcars, aes(mpg, wt)) + geom_point()
+p + facet_grid(. ~ cyl) #以cyl为分类变量
+p + facet_wrap( ~ cyl, nrow = 3) #wrap与grid的区别
+p + facet_grid(cyl ~ .) #以cyl为分类变量
+p + facet_wrap( ~ cyl, ncol = 3) #wrap与grid的区别
+p + facet_grid(vs ~ am) #以vs和am为分类变量
+p + facet_wrap(vs ~ am, ncol = 2) #wrap与grid 的区别
+```
+
+```{r}
+p <- p + geom_smooth(method = "lm", se =F, aes(color = factor(cyl))) + geom_point(aes(color = factor(cyl)))
+p + facet_grid(vs ~ am)
+p + facet_grid(vs ~ am, margins = T) #使用margins来描述边际图
+p + facet_grid( ~ cyl, scales = "free")
+p + facet_grid( ~ cyl, scales = "free_x")
+```
+
+```{r}
+# ggplot2 examples
+library(ggplot2) 
+
+# create factors with value labels 
+mtcars$gear <- factor(mtcars$gear,levels=c(3,4,5),
+  	labels=c("3gears","4gears","5gears")) 
+mtcars$am <- factor(mtcars$am,levels=c(0,1),
+  	labels=c("Automatic","Manual")) 
+mtcars$cyl <- factor(mtcars$cyl,levels=c(4,6,8),
+   labels=c("4cyl","6cyl","8cyl")) 
+
+# Kernel density plots for mpg
+# grouped by number of gears (indicated by color)
+qplot(mpg, data=mtcars.c, geom="density", fill=gear, alpha=I(.5), 
+   main="Distribution of Gas Milage", xlab="Miles Per Gallon", 
+   ylab="Density")
+
+# Scatterplot of mpg vs. hp for each combination of gears and cylinders
+# in each facet, transmittion type is represented by shape and color
+qplot(hp, mpg, data=mtcars, shape=am, color=am, 
+   facets=gear~cyl, size=I(3),
+   xlab="Horsepower", ylab="Miles per Gallon") 
+
+# Separate regressions of mpg on weight for each number of cylinders
+qplot(wt, mpg, data=mtcars, geom=c("point", "smooth"), 
+   method="lm", formula=y~x, color=cyl, 
+   main="Regression of MPG on Weight", 
+   xlab="Weight", ylab="Miles per Gallon")
+
+# Boxplots of mpg by number of gears 
+# observations (points) are overlayed and jittered
+qplot(gear, mpg, data=mtcars, geom=c("boxplot", "jitter"), 
+   fill=gear, main="Mileage by Gear Number",
+   xlab="", ylab="Miles per Gallon")
+```
+
